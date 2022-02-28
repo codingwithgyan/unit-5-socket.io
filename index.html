@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body></body>
+  <button id="btn">Click here to emit</button>
+  <h1 id="h1"></h1>
+  <script type="module">
+    import { io } from "https://cdn.socket.io/4.3.2/socket.io.esm.min.js";
+    let btn = document.getElementById("btn");
+    let h1 = document.getElementById("h1");
+    let count = 1;
+    const socket = io("ws://localhost:2345/");
+    socket.on("connect", (socket) => {
+      console.log("user connected");
+    });
+
+    socket.on("new_user_joined", ({ id }) => {
+      console.log("a new user joined with socket id : " + id);
+    });
+    socket.on("new_message", (data) => {
+      console.log(data);
+      h1.innerHTML +=
+        "Received a message for all " + data.message + "  " + count + "<br/>";
+      count++;
+    });
+    btn.addEventListener("click", () => {
+      socket.emit("push_to_all", { message: "hello everyone" });
+    });
+  </script>
+</html>
